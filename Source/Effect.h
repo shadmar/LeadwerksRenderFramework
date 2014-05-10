@@ -61,7 +61,7 @@ public:
 	const bool GetVignetteEnabled() { return m_vignetting; }
 	const float GetVinetteOuterBorder() { return m_vignout; }
 	const float GetVinetteInnerBorder() { return m_vignin; }
-	const float GetVinetteFade() { return m_vignout; }
+	const float GetVinetteFade() { return m_vignfade; }
 
 	const float GetMaxBlur() { return m_maxblur; }
 
