@@ -22,7 +22,7 @@ public:
 
 	const float GetIntensity() { return m_intensity; }
 
-	const std::string default_shader = "Shadmar_Shaders/00_PP_klepto_skybox.lua";
+	const std::string default_shader = "Shaders/PostEffects/EffectClass/00_PP_klepto_skybox.lua";
 };
 
 class Bloom
@@ -51,7 +51,7 @@ public:
 	const float GetMiddlegray() { return m_middlegray; }
 	const float GetCutOff() { return m_whitecutoff; }
 
-	const std::string default_shader = "Shadmar_Shaders/08_PP_Bloom.lua";
+	const std::string default_shader = "Shaders/PostEffects/EffectClass/08_PP_Bloom.lua";
 };
 
 
