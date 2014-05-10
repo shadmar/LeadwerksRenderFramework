@@ -155,30 +155,30 @@ int samples = 3; //samples on the first ring
 int rings = 3; //ring count
 
 bool manualdof = true; //manual dof calculation
-float ndofstart = 1.0; //near dof blur start
-float ndofdist = 2.0; //near dof blur falloff distance
-float fdofstart = 1.0; //far dof blur start
-float fdofdist = 30.0; //far dof blur falloff distance
+uniform float ndofstart = 1.0; //near dof blur start
+uniform float ndofdist = 2.0; //near dof blur falloff distance
+uniform float fdofstart = 1.0; //far dof blur start
+uniform float fdofdist = 30.0; //far dof blur falloff distance
 
-float CoC = 01.03;//circle of confusion size in mm (35mm film = 0.03mm)
+float CoC = 0.03;//circle of confusion size in mm (35mm film = 0.03mm)
 
-bool vignetting = true; //use optical lens vignetting?
-float vignout = 1.3; //vignetting outer border
-float vignin = 0.0; //vignetting inner border
-float vignfade = 22.0; //f-stops till vignete fades
+uniform bool vignetting = true; //use optical lens vignetting?
+uniform float vignout = 1.3; //vignetting outer border
+uniform float vignin = 0.0; //vignetting inner border
+uniform float vignfade = 22.0; //f-stops till vignete fades
 
 bool autofocus = false; //use autofocus in shader? disable if you use external focalDepth value
 vec2 focus = vec2(0.5,0.5); // autofocus point on screen (0.0,0.0 - left lower corner, 1.0,1.0 - upper right)
-float maxblur = 2.0; //clamp value of max blur (0.0 = no blur,1.0 default)
+uniform float maxblur = 2.0; //clamp value of max blur (0.0 = no blur,1.0 default)
 
-float threshold = 0.5; //highlight threshold;
-float gain = 2.0; //highlight gain;
+uniform float threshold = 0.5; //highlight threshold;
+uniform float gain = 2.0; //highlight gain;
 
-float bias = 0.5; //bokeh edge bias
-float fringe = 0.7; //bokeh chromatic aberration/fringing
+uniform float bias = 0.5; //bokeh edge bias
+uniform float fringe = 0.7; //bokeh chromatic aberration/fringing
 
 bool noise = true; //use noise instead of pattern for sample dithering
-float namount = 0.0001; //dither amount
+uniform float namount = 0.0001; //dither amount
 
 bool depthblur = true; //blur the depth buffer?
 float dbsize = 1.25; //depthblursize
