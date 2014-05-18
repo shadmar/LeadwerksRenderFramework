@@ -204,5 +204,28 @@ public:
 	const float GetCutOff() { return m_whitecutoff; }
 };
 
+class Fog : public BaseEffect
+{
+private:
+	Vec2 m_fogrange;
+	Vec4 m_fogcolor;
+	Vec2 m_fogangle;
+
+public:
+	Fog();
+	Fog(Camera* camera);
+	Fog(Camera* camera, bool active);
+	Fog(Camera* camera, bool active, std::string shader);
+	~Fog(){};
+
+	void SetParams(const Vec2 fogrange, const Vec4 fogcolor, const Vec2 fogangle);
+	void SetFogRange(const Vec2 fogrange);
+	void SetFogColor(const Vec4 fogcolor);
+	void SetFogAngle(const Vec2 fogangle);
+
+	const Vec2 GetFogRange() { return m_fogrange; }
+	const Vec4 GetFogColor() { return m_fogcolor; }
+	const Vec2 GetFogAngle() { return m_fogangle; }
+};
 
 

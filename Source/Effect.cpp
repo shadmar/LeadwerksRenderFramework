@@ -308,3 +308,42 @@ void Bloom::SetCutOff(const float cutoff)
 	m_whitecutoff = cutoff;
 	m_camera->SetKeyValue("bloom_WhiteCutoff", to_string(m_whitecutoff));
 }
+
+Fog::Fog(Camera* camera) : BaseEffect(kEffectTypeFog, camera, "Shaders/PostEffects/EffectClass/50_PP_klepto_Fog.lua")
+{
+}
+
+Fog::Fog(Camera* camera, bool active) : BaseEffect(kEffectTypeFog, camera, active, "Shaders/PostEffects/EffectClass/50_PP_klepto_Fog.lua")
+{
+}
+
+Fog::Fog(Camera* camera, bool active, std::string shader) : BaseEffect(kEffectTypeFog, camera, active, shader)
+{
+}
+
+
+void Fog::SetParams(const Vec2 fogrange, const Vec4 fogcolor, const Vec2 fogangle)
+{
+	m_fogrange = fogrange;
+	m_fogcolor = fogcolor;
+	m_fogangle = fogangle;
+
+	m_camera->SetKeyValue("fog_fogrange", to_string(m_fogrange.x) + "," + to_string(m_fogrange.y));
+	m_camera->SetKeyValue("fog_fogcolor", to_string(m_fogcolor.x) + "," + to_string(m_fogcolor.y) + "," + to_string(m_fogcolor.z) + "," + to_string(m_fogcolor.w));
+	m_camera->SetKeyValue("fog_fogangle", to_string(m_fogangle.x) + "," + to_string(m_fogangle.y));
+}
+void Fog::SetFogRange(const Vec2 fogrange)
+{
+	m_fogrange = fogrange;
+	m_camera->SetKeyValue("fog_fogrange", to_string(m_fogrange.x) + "," + to_string(m_fogrange.y));
+}
+void Fog::SetFogColor(const Vec4 fogcolor)
+{
+	m_fogcolor = fogcolor;
+	m_camera->SetKeyValue("fog_fogcolor", to_string(m_fogcolor.x) + "," + to_string(m_fogcolor.y) + "," + to_string(m_fogcolor.z) + "," + to_string(m_fogcolor.w));
+}
+void Fog::SetFogAngle(const Vec2 fogangle)
+{
+	m_fogangle = fogangle;
+	m_camera->SetKeyValue("fog_fogangle", to_string(m_fogangle.x) + "," + to_string(m_fogangle.y));
+}
