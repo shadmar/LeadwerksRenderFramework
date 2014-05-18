@@ -5,6 +5,7 @@
 --Called once at start
 function Script:Start()
 	--Load this script's shader
+	--self.shader = Shader:Load("_klepto_skybox.shader")
 	self.shader = Shader:Load("Shaders/PostEffects/EffectClass/_klepto_skybox.shader")
 end
 
@@ -30,7 +31,7 @@ function Script:Render(camera,context,buffer,depth,diffuse,normals)
 end
 
 --Called when the effect is detached or the camera is deleted
-function Script:Release()
+function Script:Detach()
 	if self.shader then
 		self.shader:Release()
 		self.shader = nil

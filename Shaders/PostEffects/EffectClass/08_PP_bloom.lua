@@ -9,6 +9,9 @@ function Script:Start()
 	self.shader_hblur = Shader:Load("Shaders/PostEffects/EffectClass/_hblur.shader")
 	self.shader_vblur = Shader:Load("Shaders/PostEffects/EffectClass/_vblur.shader")
 	self.shader_bright = Shader:Load("Shaders/PostEffects/EffectClass/_brightpass.shader")
+	
+	--GODRAYS
+	--self.shader_god = Shader:Load("Shaders/PostEffects/EffectClass/_godray.shader")
 end
 
 --Called each time the camera is rendered
@@ -63,7 +66,16 @@ function Script:Render(camera,context,buffer,depth,diffuse,normals)
 	--Downsample
 	self.buffer[0]:Blit(self.buffer[1],Buffer.Color)
 	self.buffer[1]:Blit(self.buffer[2],Buffer.Color)
-	
+
+	--[[--godray
+	self.buffer[0]:Enable()
+	self.shader_god:Enable()  
+	local p = camera:Project(Vec3(0,40,500)) -- send sun position to godrays
+	self.shader_god:SetVec2("screenLightPos",Vec2(p.x/self.buffer[0]:GetWidth(),p.y/self.buffer[0]:GetHeight()))
+	self.buffer[3]:GetColorTexture():Bind(1)
+	context:DrawImage(self.buffer[3]:GetColorTexture(),0,0,buffer:GetWidth(),buffer:GetHeight())
+	self.buffer[0]:Disable() --]]
+
 	--hblur
 	self.buffer[0]:Enable()
 	self.shader_hblur:Enable()  

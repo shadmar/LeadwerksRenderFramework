@@ -68,10 +68,6 @@ void main(void)
 	gl_Position = projectionmatrix * (drawmatrix * vec4(position[gl_VertexID]+offset, 0.0, 1.0));
 }
 @OpenGL4.Fragment
-//--------------------------------------
-// Vignette shader by Josh Klint (based on Shadmar's nightvision shader)
-//--------------------------------------
-
 #version 400
 
 uniform bool isbackbuffer;
@@ -303,6 +299,11 @@ vec3 debugFocus(vec3 col, float blur, float depth)
 	return col;
 }
 
+float DepthToZPosition(in float depth) {
+	return camerarange.x / (camerarange.y - depth * (camerarange.y - camerarange.x)) * camerarange.y;
+}
+
+
 float linearize(float depth)
 {
 	return -zfar * znear / (depth * (zfar - znear) - zfar);
@@ -332,7 +333,7 @@ void main()
 	
 	//focal plane calculation
 	
-	float fDepth = focalDepth;
+	float fDepth = focalDepth+ndofdist;
 	
 	if (autofocus)
 	{

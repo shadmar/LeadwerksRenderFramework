@@ -13,17 +13,17 @@ function Script:Render(camera,context,buffer,depth,diffuse,normals)
 	--Brightpass
 	self.shader:Enable()
 
-	local ndofstart=camera:GetKeyValue("dof_ndofstart","1.0")
-	local ndofdist=camera:GetKeyValue("dof_ndofdist","10.0")
-	local fdofstart=camera:GetKeyValue("dof_fdofstart","10.0")
-	local fdofdist=camera:GetKeyValue("dof_fdofdist","80.0")
+	local ndofstart=camera:GetKeyValue("dof_ndofstart","0.0")
+	local ndofdist=camera:GetKeyValue("dof_ndofdist","0.0")
+	local fdofstart=camera:GetKeyValue("dof_fdofstart","0.0")
+	local fdofdist=camera:GetKeyValue("dof_fdofdist","600.0")
 
 	local vignetting=camera:GetKeyValue("dof_vignetting","1")
 	local vignout=camera:GetKeyValue("dof_vignout","1.3")
-	local vignin=camera:GetKeyValue("dof_vignin","0.0")
-	local vignfade=camera:GetKeyValue("dof_vignfade","80.0")
+	local vignin=camera:GetKeyValue("dof_vignin","-0.0")
+	local vignfade=camera:GetKeyValue("dof_vignfade","180.0")
 
-	local maxblur=camera:GetKeyValue("dof_maxblur","3.0")
+	local maxblur=camera:GetKeyValue("dof_maxblur","2.0")
 
 	local threshold=camera:GetKeyValue("dof_threshold","0.75")
 	local gain=camera:GetKeyValue("dof_gain","2.0")
@@ -60,7 +60,7 @@ function Script:Render(camera,context,buffer,depth,diffuse,normals)
 end
 
 --Called when the effect is detached or the camera is deleted
-function Script:Release()
+function Script:Detach()
 	if self.shader then
 		self.shader:Release()
 		self.shader = nil
