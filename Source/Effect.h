@@ -2,7 +2,99 @@
 
 using namespace Leadwerks;
 
-class Dof
+enum
+{
+	kEffectTypeDOF = 'edof',
+	kEffectTypeSkybox = 'esky',
+	kEffectTypeBloom = 'eblo',
+	kEffectTypeFog = 'efog'
+};
+
+class BaseEffect
+{
+	private:
+
+		long					type;
+
+		bool					m_active;
+
+	protected:
+
+		std::string				m_shader;
+
+		Camera*					m_camera;
+
+	public:
+
+		BaseEffect(long type, Camera* camera, std::string shader);
+		BaseEffect(long type, Camera* camera, bool active, std::string shader);
+		~BaseEffect();
+
+		virtual void Activate(void);
+
+		long GetType(void)
+		{
+			return type;
+		}
+
+		void SetType(long t)
+		{
+			type = t;
+		}
+
+		bool GetActive(void)
+		{
+			return m_active;
+		}
+
+		void SetActive(bool a)
+		{
+			m_active = a;
+		}
+
+		std::string GetShader(void)
+		{
+			return m_shader;
+		}
+
+		void SetShader(std::string shader)
+		{
+			m_shader = shader;
+		}
+
+		Camera *GetCamera(void)
+		{
+			return m_camera;
+		}
+};
+
+
+class Effect
+{
+	private:
+
+		std::list<BaseEffect*>                    effectList;
+
+	public:
+
+		Effect();
+		~Effect();
+
+		void Update(void);
+
+		bool AddEffect(BaseEffect *effect, bool isFront);
+
+		bool RemoveEffectAt(int index);
+
+		bool RemoveEffectByType(long type);
+
+		void RemoveEffects();
+};
+
+extern Effect *TheEffect;
+
+
+class Dof : public BaseEffect
 {
 private:
 	float m_ndofstart; //near dof blur start
@@ -23,16 +115,12 @@ private:
 	float m_fringe;    //bokeh chromatic aberration/fringing
 	float m_namount;   //dither amount
 
-	std::string m_shader;
-	Camera* m_camera;
 public:
 	Dof();
 	Dof(Camera* camera);
 	Dof(Camera* camera, bool active);
 	Dof(Camera* camera, bool active, std::string shader);
-	~Dof(){ delete m_camera; };
-
-	void Activate();
+	~Dof(){};
 
 	void SetNearStart(const float nearstart);
 	void SetNearDist(const float neardist);
@@ -71,50 +159,41 @@ public:
 	const float GetBokehBias() { return m_bias; }
 	const float GetBokehFringe() { return m_fringe; }
 	const float GetDither() { return m_namount; }
-
-	const std::string default_shader = "Shaders/PostEffects/EffectClass/04_PP_dof.lua";
 };
 
-class Skybox
+class Skybox : public BaseEffect
 {
 private:
 	float m_intensity;
-	std::string m_shader;
 	std::string m_cubemap;
-	Camera* m_camera;
 public:
 	Skybox();
 	Skybox(Camera* camera);
 	Skybox(Camera* camera, std::string cubemap);
 	Skybox(Camera* camera, std::string cubemap, bool active);
 	Skybox(Camera* camera, std::string cubemap, bool active, std::string shader);
-	~Skybox(){ delete m_camera; };
+	~Skybox(){};
 
-	void Activate();
 	void SetIntensity(const float intensity);
 
 	const float GetIntensity() { return m_intensity; }
-
-	const std::string default_shader = "Shaders/PostEffects/EffectClass/00_PP_klepto_skybox.lua";
 };
 
-class Bloom
+class Bloom : public BaseEffect
 {
 private:
 	float m_luminance;
 	float m_middlegray;
 	float m_whitecutoff;
-	std::string m_shader;
-	Camera* m_camera;
+
 
 public:
 	Bloom();
 	Bloom(Camera* camera);
 	Bloom(Camera* camera, bool active);
 	Bloom(Camera* camera, bool active, std::string shader);
-	~Bloom(){ delete m_camera; };
+	~Bloom(){};
 
-	void Activate();
 	void SetParams(const float lum, const float midgray, const float cutoff);
 	void SetLuminance(const float lum);
 	void SetMiddlegray(const float midgray);
@@ -123,8 +202,6 @@ public:
 	const float GetLuminance() { return m_luminance; }
 	const float GetMiddlegray() { return m_middlegray; }
 	const float GetCutOff() { return m_whitecutoff; }
-
-	const std::string default_shader = "Shaders/PostEffects/EffectClass/08_PP_Bloom.lua";
 };
 
 

@@ -1,23 +1,160 @@
 #include "Effect.h"
 
-Dof::Dof(Camera* camera)
+Effect * TheEffect = 0;
+
+
+
+BaseEffect::BaseEffect(long t, Camera *camera, std::string shader)
 {
+	type = t;
+
 	m_camera = camera;
-	m_shader = default_shader;
+
+	m_shader = shader;
+
+	m_active = true;
+}
+
+
+BaseEffect::BaseEffect(long t, Camera *camera, bool active, std::string shader)
+{
+	type = t;
+
+	m_camera = camera;
+
+	m_shader = shader;
+
+	m_active = active;
+}
+
+void BaseEffect::Activate()
+{
 	m_camera->AddPostEffect(m_shader);
 }
 
-Dof::Dof(Camera* camera, bool active)
+
+BaseEffect::~BaseEffect()
 {
-	m_camera = camera;
-	m_shader = default_shader;
-	if (active) m_camera->AddPostEffect(m_shader);
 }
-Dof::Dof(Camera* camera, bool active, std::string shader)
+
+Effect::Effect()
 {
-	m_camera = camera;
-	m_shader = shader;
-	if (active) m_camera->AddPostEffect(m_shader);
+}
+
+Effect::~Effect()
+{
+	RemoveEffects();
+}
+
+bool Effect::AddEffect(BaseEffect *baseEffect, bool isFront)
+{
+	bool added = false;
+
+	//Check if you already have added this effect
+	std::list<BaseEffect*>::iterator it;
+
+	for (it = effectList.begin(); it != effectList.end(); it++)
+	{
+		BaseEffect *effect = (BaseEffect*)(*it);
+
+		if (effect->GetType() == baseEffect->GetType())
+			added = false;
+	}
+
+	if (!added)
+	{
+		if (isFront)
+			effectList.push_front(baseEffect);
+		else
+			effectList.push_back(baseEffect);
+
+		baseEffect->GetCamera()->AddPostEffect(baseEffect->GetShader());
+
+		added = true;
+	}
+
+	return added;
+}
+
+void Effect::RemoveEffects()
+{
+	std::list<BaseEffect*>::iterator it;
+
+	for (it = effectList.begin(); it != effectList.end(); it++)
+	{
+		BaseEffect *effect = (BaseEffect*)(*it);
+
+		delete effect;
+
+		effect = NULL;
+	}
+}
+
+bool Effect::RemoveEffectAt(int index)
+{
+	bool removed = false;
+
+	int i = 0;
+
+	std::list<BaseEffect*>::iterator it;
+
+	for (it = effectList.begin(); it != effectList.end(); ++it)
+	{
+		BaseEffect *effect = (BaseEffect*)(*it);
+
+		if (i == index)
+		{
+			delete *it;
+			*it = 0;
+			it = effectList.erase(it);
+
+			removed = true;
+		}
+		else
+			++it;
+	}
+
+	return removed;
+}
+
+bool Effect::RemoveEffectByType(long type)
+{
+	bool removed = false;
+
+	int i = 0;
+
+	std::list<BaseEffect*>::iterator it;
+
+	for (it = effectList.begin(); it != effectList.end(); ++it)
+	{
+		BaseEffect *effect = (BaseEffect*)(*it);
+
+		if (effect->GetType() == type)
+		{
+			delete *it;
+			*it = 0;
+			it = effectList.erase(it);
+
+			removed = true;
+		}
+		else
+			++it;
+	}
+
+	return removed;
+}
+
+Dof::Dof(Camera* camera) : BaseEffect(kEffectTypeDOF, camera, "Shaders/PostEffects/EffectClass/04_PP_dof.lua")
+{
+}
+
+Dof::Dof(Camera* camera, bool active) : BaseEffect(kEffectTypeDOF, camera, active, "Shaders/PostEffects/EffectClass/04_PP_dof.lua")
+{
+
+}
+
+Dof::Dof(Camera* camera, bool active, std::string shader) : BaseEffect(kEffectTypeDOF, camera, active, shader)
+{
 }
 
 void Dof::SetNearStart(const float nearstart)
@@ -104,72 +241,45 @@ void Dof::SetDither(const float dither)
 	m_camera->SetKeyValue("dof_namount", to_string(m_namount));
 }
 
-Skybox::Skybox(Camera* camera)
+Skybox::Skybox(Camera* camera) : BaseEffect(kEffectTypeSkybox, camera, "Shaders/PostEffects/EffectClass/00_PP_klepto_skybox.lua")
 {
-	m_camera = camera;
-	m_shader = default_shader;
-	m_camera->AddPostEffect(m_shader);
 }
 
-Skybox::Skybox(Camera* camera, std::string cubemap)
+Skybox::Skybox(Camera* camera, std::string cubemap) : BaseEffect(kEffectTypeSkybox, camera, "Shaders/PostEffects/EffectClass/00_PP_klepto_skybox.lua")
 {
-	m_camera = camera;
 	m_cubemap = cubemap;
-	m_shader = default_shader;
 	m_camera->SetKeyValue("skybox_texture", m_cubemap);
-	m_camera->AddPostEffect(m_shader);
 
 }
-Skybox::Skybox(Camera* camera, std::string cubemap, bool active)
+
+Skybox::Skybox(Camera* camera, std::string cubemap, bool active) : BaseEffect(kEffectTypeSkybox, camera, active, "Shaders/PostEffects/EffectClass/00_PP_klepto_skybox.lua")
 {
-	m_camera = camera;
 	m_cubemap = cubemap;
-	m_shader = default_shader;
 	m_camera->SetKeyValue("skybox_texture", m_cubemap);
-	if (active) m_camera->AddPostEffect(m_shader);
 }
-Skybox::Skybox(Camera* camera, std::string cubemap, bool active, std::string shader)
+
+Skybox::Skybox(Camera* camera, std::string cubemap, bool active, std::string shader) : BaseEffect(kEffectTypeSkybox, camera, active, shader)
 {
-	m_camera = camera;
 	m_cubemap = cubemap;
-	m_shader = shader;
 	m_camera->SetKeyValue("skybox_texture", m_cubemap);
-	if (active) m_camera->AddPostEffect(m_shader);
 }
-void Skybox::Activate()
-{
-	m_camera->AddPostEffect(m_shader);
-}
+
 void Skybox::SetIntensity(const float intensity)
 {
 	m_intensity = intensity;
 	m_camera->SetKeyValue("skybox_intensity", to_string(m_intensity));
 }
 
-Bloom::Bloom(Camera* camera)
+Bloom::Bloom(Camera* camera) : BaseEffect(kEffectTypeBloom, camera, "Shaders/PostEffects/EffectClass/08_PP_Bloom.lua")
 {
-	m_camera = camera;
-	m_shader = default_shader;
-	m_camera->AddPostEffect(m_shader);
 }
 
-Bloom::Bloom(Camera* camera, bool active)
+Bloom::Bloom(Camera* camera, bool active) : BaseEffect(kEffectTypeBloom, camera, active, "Shaders/PostEffects/EffectClass/08_PP_Bloom.lua")
 {
-	m_camera = camera;
-	m_shader = default_shader;
-	if (active) m_camera->AddPostEffect(m_shader);
 }
 
-Bloom::Bloom(Camera* camera, bool active, std::string shader)
+Bloom::Bloom(Camera* camera, bool active, std::string shader) : BaseEffect(kEffectTypeBloom, camera, active, shader)
 {
-	m_camera = camera;
-	m_shader = shader;
-	if (active) m_camera->AddPostEffect(m_shader);
-}
-
-void Bloom::Activate()
-{
-	m_camera->AddPostEffect(m_shader);
 }
 
 void Bloom::SetParams(const float lum, const float midgray, const float cutoff)
