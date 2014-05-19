@@ -1,9 +1,5 @@
 #include "Effect.h"
 
-Effect * TheEffect = 0;
-
-
-
 BaseEffect::BaseEffect(long t, Camera *camera, std::string shader)
 {
 	type = t;
